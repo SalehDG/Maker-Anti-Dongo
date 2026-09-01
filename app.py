@@ -1,7 +1,7 @@
 import time
 
 import streamlit as st
-from config import Config
+from config import config
 from Services.gemini_services import GeminiService
 
 # Setup Halaman
@@ -15,7 +15,7 @@ def main():
     st.caption("Aplikasi Rekapitulasi Dokumen Otomatis Berbasis Gemini AI")
     
     # 1. Penanganan API Key dari Config / Sidebar Override
-    env_api_key = Config.get_api_key()
+    env_api_key = config.get_api_key()
     
     with st.sidebar:
         st.header("⚙️ Konfigurasi")
@@ -47,9 +47,9 @@ def main():
         try:
             gemini_service = GeminiService(
                 api_key=user_api_key,
-                model_name=Config.MODEL_NAME,
-                system_instruction=Config.SYSTEM_INSTRUCTION,
-                fallback_models=Config.ALTERNATIVE_MODELS,
+                model_name=config.MODEL_NAME,
+                system_instruction=config.SYSTEM_INSTRUCTION,
+                fallback_models=config.ALTERNATIVE_MODELS,
                 max_retries=3,
                 retry_delay=2.0,
             )
@@ -60,6 +60,9 @@ def main():
         # Indikator Progress
         st.divider()
         st.subheader("📋 Hasil Rekapitulasi Data")
+
+        if "fase1_done" not in st.session_state:
+            st.session_state.fase1_done = set()
 
         for idx, uploaded_file in enumerate(uploaded_files, start=1):
             progress_container = st.container()
@@ -96,6 +99,14 @@ def main():
 
                 with st.expander(f"📌 Rekap Data PDF {idx}: {uploaded_file.name}", expanded=True):
                     st.markdown(result_text)
+
+                    done_key = f"done_{idx}_{uploaded_file.name}"
+                    if done_key in st.session_state.fase1_done:
+                        st.success("✅ Mark as done")
+                    else:
+                        if st.button("✅ Mark as done", key=done_key):
+                            st.session_state.fase1_done.add(done_key)
+                            st.success(f"✅ {uploaded_file.name} telah ditandai selesai.")
 
             except Exception as err:
                 update_progress(100, str(err), "error")

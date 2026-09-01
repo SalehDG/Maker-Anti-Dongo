@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-class Config:
+class config:
     @staticmethod
     def get_api_key() -> str:
         # Cek dari Environment Variable lokal (.env)
