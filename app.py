@@ -3,7 +3,11 @@ from datetime import date
 
 import streamlit as st
 from config import Config
-from Services.bukti_maker_service import generate_lampiran_pdf, render_pdf_to_images
+from Services.bukti_maker_service import (
+    format_uploaded_files_message,
+    generate_lampiran_pdf,
+    render_pdf_to_images,
+)
 from Services.gemini_services import GeminiService
 
 # Setup Halaman
@@ -124,6 +128,11 @@ def render_fase2():
 
         filename = f"LAMPIRAN DOKUMEN PENDUKUNG, Maker {tanggal_maker.strip()}.pdf"
         st.success("PDF Bukti Lengkap Maker berhasil dibuat.")
+
+        uploaded_names = [evidence_file.name for evidence_file in evidence_files]
+        st.markdown("### Pesan Follow Up")
+        st.code(format_uploaded_files_message(uploaded_names), language="text")
+
         st.download_button("⬇️ Download Bukti Lengkap Maker", output_pdf.getvalue(), filename, "application/pdf", key="fase2_download")
 
 if __name__ == "__main__":

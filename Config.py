@@ -47,18 +47,12 @@ class Config:
        - 1. Rekening Target : Tabel 3 kolom (Nama Bank | Nomor Rekening | Nama Pemilik).
        - 2. Berapa yang Dibutuhkan? : Tabel 2 kolom (Nominal Angka tanpa titik | Nominal Terbilang).
        - 3. Reference Number : Format [Nomor_Invoice_Depan]/[Kode_Vendor] DP10 (Maks. 20 karakter).
-       - 4. Remark : Kategori belanja utama + Tanggal (Maks. 20 karakter. DILARANG menyingkat item menjadi "it". Jumlah item hanya ditulis utuh sebagai "item" jika muat <= 20 karakter. Jika > 20 karakter, hapus/lewati jumlah item-nya).
+       - 4. Remark : Kategori belanja utama + Tanggal (Contoh penulisan tanggal: tanggal/bulan/tahun atau 17/08/26) (Maks. 20 karakter. DILARANG menyingkat item menjadi "it". Jumlah item hanya ditulis utuh sebagai "item" jika muat <= 20 karakter. Jika > 20 karakter, hapus/lewati jumlah item-nya).
        - 5. Extended Detail : Penjabaran lengkap kombinasi invoice, kategori belanja, dan tanggal tanpa disingkat tapi tetap efektif.
        - 6. Email : Selalu diisi lengkap dengan: astridpurnamasary084@gmail.com, patrissae895@gmail.com, salehdg.maker@gmail.com
-       - 7. Nama PDF : Format nama berkas dari Extended Detail (ubah tanda "/" pada no invoice menjadi "-") dan HAPUS ekstensi ".pdf" di nama dokumen.
+       - 7. Nama PDF : Format nama pdf dan HAPUS ekstensi ".pdf" di nama dokumen.
 
     4. TABEL RANGKUMAN AKHIR:
        - Setelah merinci semua dokumen satu per satu, buatkan tabel rangkuman nama judul di bagian paling bawah dengan kolom: (No. | Tanggal Invoice | Nama Dokumen Asli | Nama Judul / Nama PDF Rekap) tanpa ekstensi ".pdf".
-
-    5. Pesan Rekap:
-        - Setelah seluruh dokumen selesai diproses, buatkan pesan untuk whatsapp yang bertujuan memnujukan list apa saja yang telah di rekapitulasi, dengan format: "Berikut list dokumen yang telah direkapitulasi dalam bentuk kebawah seperti ini:
-        1. [Nama Dokumen Asli]
-        2. [Nama Dokumen Asli]
-        dst. Mohon untuk segera di follow up dan diproses lebih lanjut. Terima kasih."
         "
     """

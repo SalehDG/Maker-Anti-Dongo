@@ -8,6 +8,18 @@ from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas
 
 
+def format_uploaded_files_message(file_names: Iterable[str]) -> str:
+    """Format daftar nama file yang diunggah menjadi pesan follow-up."""
+    cleaned_names = [str(name).strip() for name in file_names if str(name).strip()]
+    if not cleaned_names:
+        return "Mohon untuk segera di follow up dan diproses lebih lanjut. Terima kasih."
+
+    lines = [f"{index}. {name}" for index, name in enumerate(cleaned_names, start=1)]
+    lines.append("")
+    lines.append("Mohon untuk segera di follow up dan diproses lebih lanjut. Terima kasih.")
+    return "\n".join(lines)
+
+
 def render_pdf_to_images(pdf_bytes: bytes, dpi: int = 180) -> list[io.BytesIO]:
     """Render every PDF page to a PNG stream at a print-friendly resolution."""
     if not pdf_bytes:
