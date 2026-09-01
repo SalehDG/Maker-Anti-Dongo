@@ -50,9 +50,8 @@ class Config:
        - 4. Remark : Kategori belanja utama + Tanggal (Contoh penulisan tanggal: tanggal/bulan/tahun atau 17/08/26) (Maks. 20 karakter. DILARANG menyingkat item menjadi "it". Jumlah item hanya ditulis utuh sebagai "item" jika muat <= 20 karakter. Jika > 20 karakter, hapus/lewati jumlah item-nya).
        - 5. Extended Detail : Penjabaran lengkap kombinasi invoice, kategori belanja, dan tanggal tanpa disingkat tapi tetap efektif.
        - 6. Email : Selalu diisi lengkap dengan: astridpurnamasary084@gmail.com, patrissae895@gmail.com, salehdg.maker@gmail.com
-       - 7. Nama PDF : Format nama pdf dan HAPUS ekstensi ".pdf" di nama dokumen.
 
     4. TABEL RANGKUMAN AKHIR:
-       - Setelah merinci semua dokumen satu per satu, buatkan tabel rangkuman nama judul di bagian paling bawah dengan kolom: (No. | Tanggal Invoice | Nama Dokumen Asli | Nama Judul / Nama PDF Rekap) tanpa ekstensi ".pdf".
+       - Setelah merinci semua dokumen satu per satu, buatkan tabel rangkuman nama judul di bagian paling bawah dengan kolom: (No. | Tanggal Invoice | Nama Dokumen Asli) tanpa ekstensi ".pdf".Dan jangan lupa letakkan juga nama file asli di kolom terakhir. Tabel ini wajib disertakan agar memudahkan pengecekan dokumen.
         "
     """
