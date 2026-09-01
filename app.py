@@ -75,8 +75,6 @@ def main():
                 percent_text.markdown(f"<div style='text-align:right; font-weight:bold; color:#4f46e5;'> {value}% </div>", unsafe_allow_html=True)
                 if type_text == "info":
                     status_text.info(f"Memproses PDF {idx}/{len(uploaded_files)}: {uploaded_file.name} | {message}")
-                elif type_text == "success":
-                    status_text.success(f"Selesai: {uploaded_file.name} | {message}")
                 elif type_text == "error":
                     status_text.error(f"Gagal: {uploaded_file.name} | {message}")
 
@@ -100,6 +98,8 @@ def main():
                 with st.expander(f"📌 Rekap Data PDF {idx}: {uploaded_file.name}", expanded=True):
                     st.markdown(result_text)
 
+                    st.markdown(f"**Nama file:** {uploaded_file.name}")
+
                     done_key = f"done_{idx}_{uploaded_file.name}"
                     if done_key in st.session_state.fase1_done:
                         st.success("✅ Mark as done")
@@ -107,6 +107,8 @@ def main():
                         if st.button("✅ Mark as done", key=done_key):
                             st.session_state.fase1_done.add(done_key)
                             st.success(f"✅ {uploaded_file.name} telah ditandai selesai.")
+
+                status_text.success(f"Selesai: {uploaded_file.name} | Menyelesaikan proses PDF")
 
             except Exception as err:
                 update_progress(100, str(err), "error")
