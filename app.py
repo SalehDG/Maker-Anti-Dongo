@@ -2,7 +2,12 @@ import time
 from datetime import date
 
 import streamlit as st
-from config import Config
+from config import config
+from Services.bukti_maker_service import (
+    format_uploaded_files_message,
+    generate_lampiran_pdf,
+    render_pdf_to_images,
+)
 from Services.gemini_services import GeminiService
 
 # Setup Halaman
@@ -23,9 +28,9 @@ def main():
 
 
 def render_fase1():
-    # 1. Penanganan API Key dari Config / Sidebar Override
-    env_api_key = Config.get_api_key()
-    
+    # 1. Penanganan API Key dari config / Sidebar Override
+    env_api_key = config.get_api_key()
+
     with st.sidebar:
         st.header("⚙️ Konfigurasi")
         if env_api_key:
@@ -35,23 +40,30 @@ def render_fase1():
             st.warning("API Key belum terkonfigurasi di env!")
             user_api_key = st.text_input("Masukkan Gemini API Key:", type="password")
 
+    # 2. Area Unggah Berkas
     uploaded_files = st.file_uploader(
-        "Unggah berkas PDF (Bisa lebih dari 1 file):", type=["pdf"], accept_multiple_files=True,
-        key="fase1_upload",
+        "Unggah berkas PDF (Bisa lebih dari 1 file):", 
+        type=["pdf"], 
+        accept_multiple_files=True
     )
-    if st.button("🚀 Proses Rekapitulasi", type="primary", key="fase1_process"):
+
+    # 3. Tombol Eksekusi & Pemrosesan
+    if st.button("🚀 Proses Rekapitulasi", type="primary"):
         if not user_api_key:
             st.error("API Key belum dimasukkan. Silakan atur .env atau masukkan API Key di sidebar.")
             return
+
         if not uploaded_files:
             st.warning("Silakan unggah minimal satu berkas PDF terlebih dahulu.")
             return
+
+        # Inisialisasi Service
         try:
             gemini_service = GeminiService(
                 api_key=user_api_key,
-                model_name=Config.MODEL_NAME,
-                system_instruction=Config.SYSTEM_INSTRUCTION,
-                fallback_models=Config.ALTERNATIVE_MODELS,
+                model_name=config.MODEL_NAME,
+                system_instruction=config.SYSTEM_INSTRUCTION,
+                fallback_models=config.ALTERNATIVE_MODELS,
                 max_retries=3,
                 retry_delay=2.0,
             )
@@ -59,8 +71,12 @@ def render_fase1():
             st.error(f"Inisialisasi Service Gagal: {e}")
             return
 
+        # Indikator Progress
         st.divider()
         st.subheader("📋 Hasil Rekapitulasi Data")
+
+        if "fase1_done" not in st.session_state:
+            st.session_state.fase1_done = set()
 
         for idx, uploaded_file in enumerate(uploaded_files, start=1):
             progress_container = st.container()
@@ -78,20 +94,40 @@ def render_fase1():
 
             update_progress(10, "Membaca file PDF...", "info")
             time.sleep(0.2)
+
             update_progress(30, "Mengirim dokumen ke Gemini AI...", "info")
             time.sleep(0.2)
+
             update_progress(55, "Menunggu respons Gemini...", "info")
+
             try:
-                result_text = gemini_service.extract_invoice_data(uploaded_file.read())
+                file_bytes = uploaded_file.read()
+                result_text = gemini_service.extract_invoice_data(file_bytes)
+
                 update_progress(85, "Gemini sedang mengekstrak data...", "info")
                 time.sleep(0.3)
+
                 update_progress(100, "Selesai", "success")
+
                 with st.expander(f"📌 Rekap Data PDF {idx}: {uploaded_file.name}", expanded=True):
                     st.markdown(result_text)
+
+                    st.markdown(f"**Nama file:** {uploaded_file.name}")
+
+                    done_key = f"done_{idx}_{uploaded_file.name}"
+                    if done_key in st.session_state.fase1_done:
+                        st.success("✅ Mark as done")
+                    else:
+                        if st.button("✅ Mark as done", key=done_key):
+                            st.session_state.fase1_done.add(done_key)
+                            st.success(f"✅ {uploaded_file.name} telah ditandai selesai.")
+
+                status_text.success(f"Selesai: {uploaded_file.name} | Menyelesaikan proses PDF")
 
             except Exception as err:
                 update_progress(100, str(err), "error")
                 st.error(f"Gagal memproses file {uploaded_file.name}: {err}")
+
             st.markdown("---")
 
 
