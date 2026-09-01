@@ -3,11 +3,6 @@ from datetime import date
 
 import streamlit as st
 from config import Config
-from Services.bukti_maker_service import (
-    format_uploaded_files_message,
-    generate_lampiran_pdf,
-    render_pdf_to_images,
-)
 from Services.gemini_services import GeminiService
 
 # Setup Halaman
@@ -30,6 +25,7 @@ def main():
 def render_fase1():
     # 1. Penanganan API Key dari Config / Sidebar Override
     env_api_key = Config.get_api_key()
+    
     with st.sidebar:
         st.header("⚙️ Konfigurasi")
         if env_api_key:
@@ -52,9 +48,12 @@ def render_fase1():
             return
         try:
             gemini_service = GeminiService(
-                api_key=user_api_key, model_name=Config.MODEL_NAME,
+                api_key=user_api_key,
+                model_name=Config.MODEL_NAME,
                 system_instruction=Config.SYSTEM_INSTRUCTION,
-                fallback_models=Config.ALTERNATIVE_MODELS, max_retries=3, retry_delay=2.0,
+                fallback_models=Config.ALTERNATIVE_MODELS,
+                max_retries=3,
+                retry_delay=2.0,
             )
         except Exception as e:
             st.error(f"Inisialisasi Service Gagal: {e}")
@@ -62,6 +61,7 @@ def render_fase1():
 
         st.divider()
         st.subheader("📋 Hasil Rekapitulasi Data")
+
         for idx, uploaded_file in enumerate(uploaded_files, start=1):
             progress_container = st.container()
             status_text = progress_container.empty()
@@ -73,8 +73,6 @@ def render_fase1():
                 percent_text.markdown(f"<div style='text-align:right; font-weight:bold; color:#4f46e5;'> {value}% </div>", unsafe_allow_html=True)
                 if type_text == "info":
                     status_text.info(f"Memproses PDF {idx}/{len(uploaded_files)}: {uploaded_file.name} | {message}")
-                elif type_text == "success":
-                    status_text.success(f"Selesai: {uploaded_file.name} | {message}")
                 elif type_text == "error":
                     status_text.error(f"Gagal: {uploaded_file.name} | {message}")
 
@@ -90,6 +88,7 @@ def render_fase1():
                 update_progress(100, "Selesai", "success")
                 with st.expander(f"📌 Rekap Data PDF {idx}: {uploaded_file.name}", expanded=True):
                     st.markdown(result_text)
+
             except Exception as err:
                 update_progress(100, str(err), "error")
                 st.error(f"Gagal memproses file {uploaded_file.name}: {err}")
