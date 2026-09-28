@@ -38,7 +38,20 @@ def render_fase1():
             user_api_key = env_api_key
         else:
             st.warning("API Key belum terkonfigurasi di env!")
-            user_api_key = st.text_input("Masukkan Gemini API Key:", type="password")
+            with st.form("manual_api_key_form"):
+                st.text_input(
+                    "Masukkan Gemini API Key:",
+                    type="password",
+                    key="manual_api_key",
+                )
+                api_key_submitted = st.form_submit_button("Simpan API Key")
+
+            user_api_key = st.session_state.get("manual_api_key", "").strip()
+            if api_key_submitted:
+                if user_api_key:
+                    st.success("API Key siap digunakan untuk sesi ini.")
+                else:
+                    st.error("API Key belum dimasukkan.")
 
     # 2. Area Unggah Berkas
     uploaded_files = st.file_uploader(
