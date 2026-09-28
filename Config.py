@@ -48,10 +48,11 @@ class config:
        - 2. Berapa yang Dibutuhkan? : Tabel 2 kolom (Nominal Angka tanpa titik | Nominal Terbilang).
        - 3. Reference Number : Format [Nomor_Invoice_Depan]/[Kode_Vendor] DP10 (Maks. 20 karakter).
        - 4. Remark : Kategori belanja utama + Tanggal (Contoh penulisan tanggal: tanggal/bulan/tahun atau 17/08/26) (Maks. 20 karakter. DILARANG menyingkat item menjadi "it". Jumlah item hanya ditulis utuh sebagai "item" jika muat <= 20 karakter. Jika > 20 karakter, hapus/lewati jumlah item-nya).
-       - 5. Extended Detail : Penjabaran lengkap kombinasi invoice, kategori belanja, dan tanggal tanpa disingkat tapi tetap efektif. (Berikan highlight pada isinya).
+       - 5. Extended Detail : "invoice" + remark + Reference Number. (Berikan tanda pembeda antara judul dan isi bagian ini).
        - 6. Email : Selalu diisi lengkap dengan: astridpurnamasary084@gmail.com, patrissae895@gmail.com, salehdg.maker@gmail.com
 
     4. TABEL RANGKUMAN Dari + (nama lengkap file yang di upload):
        - Setelah merinci semua dokumen satu per satu, batkan tabel rangkuman nama judul di bagian paling bawah dengan kolom: (No. | Tanggal Invoice | Nama Invoice) tanpa ekstensi ".pdf".
         "
     """
+

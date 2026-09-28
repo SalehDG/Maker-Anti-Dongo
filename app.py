@@ -47,6 +47,9 @@ def render_fase1():
         accept_multiple_files=True
     )
 
+    if "fase1_results" not in st.session_state:
+        st.session_state.fase1_results = {}
+
     # 3. Tombol Eksekusi & Pemrosesan
     if st.button("🚀 Proses Rekapitulasi", type="primary"):
         if not user_api_key:
@@ -71,13 +74,9 @@ def render_fase1():
             st.error(f"Inisialisasi Service Gagal: {e}")
             return
 
+        st.session_state.fase1_results = {}
+
         # Indikator Progress
-        st.divider()
-        st.subheader("📋 Hasil Rekapitulasi Data")
-
-        if "fase1_done" not in st.session_state:
-            st.session_state.fase1_done = set()
-
         for idx, uploaded_file in enumerate(uploaded_files, start=1):
             progress_container = st.container()
             status_text = progress_container.empty()
@@ -103,32 +102,52 @@ def render_fase1():
             try:
                 file_bytes = uploaded_file.read()
                 result_text = gemini_service.extract_invoice_data(file_bytes)
+                file_key = f"{uploaded_file.name}:{uploaded_file.size}"
+                st.session_state.fase1_results[file_key] = {
+                    "name": uploaded_file.name,
+                    "result": result_text,
+                    "error": None,
+                }
 
                 update_progress(85, "Gemini sedang mengekstrak data...", "info")
                 time.sleep(0.3)
 
                 update_progress(100, "Selesai", "success")
 
-                with st.expander(f"📌 Rekap Data PDF {idx}: {uploaded_file.name}", expanded=True):
-                    st.markdown(result_text)
-
-                    st.markdown(f"**Nama file:** {uploaded_file.name}")
-
-                    done_key = f"done_{idx}_{uploaded_file.name}"
-                    if done_key in st.session_state.fase1_done:
-                        st.success("✅ Mark as done")
-                    else:
-                        if st.button("✅ Mark as done", key=done_key):
-                            st.session_state.fase1_done.add(done_key)
-                            st.success(f"✅ {uploaded_file.name} telah ditandai selesai.")
-
                 status_text.success(f"Selesai: {uploaded_file.name} | Menyelesaikan proses PDF")
 
             except Exception as err:
                 update_progress(100, str(err), "error")
-                st.error(f"Gagal memproses file {uploaded_file.name}: {err}")
+                file_key = f"{uploaded_file.name}:{uploaded_file.size}"
+                st.session_state.fase1_results[file_key] = {
+                    "name": uploaded_file.name,
+                    "result": None,
+                    "error": str(err),
+                }
 
             st.markdown("---")
+
+    if uploaded_files and st.session_state.fase1_results:
+        st.divider()
+        st.subheader("📋 Hasil Rekapitulasi Data")
+
+        for idx, uploaded_file in enumerate(uploaded_files, start=1):
+            file_key = f"{uploaded_file.name}:{uploaded_file.size}"
+            result = st.session_state.fase1_results.get(file_key)
+            if not result:
+                continue
+
+            with st.expander(f"📌 Rekap Data PDF {idx}: {uploaded_file.name}", expanded=True):
+                if result["error"]:
+                    st.error(f"Gagal memproses file {uploaded_file.name}: {result['error']}")
+                else:
+                    st.markdown(result["result"])
+                    st.markdown(f"**Nama file:** {uploaded_file.name}")
+
+                st.checkbox(
+                    "✅ Mark as done",
+                    key=f"fase1_done_{file_key}",
+                )
 
 
 def render_fase2():
